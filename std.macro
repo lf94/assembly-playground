@@ -1,0 +1,43 @@
+.macro α dest, src
+  lea \dest, \src
+.endm
+
+.macro → location
+  mov \location, rax
+.endm
+
+.macro λ function_name, arg1, arg2, arg3, arg4, arg5, arg6
+  .ifnb \arg1
+    .ifnc \arg1, _
+      mov rdi, \arg1
+    .endif
+  .endif
+  .ifnb \arg2
+    .ifnc \arg1, _
+      mov rsi, \arg2
+    .endif
+  .endif
+  .ifnb \arg3
+    .ifnc \arg1, _
+      mov rdx, \arg3
+    .endif
+  .endif
+  .ifnb \arg4
+    .ifnc \arg1, _
+      mov rcx, \arg4
+    .endif
+  .endif
+  .ifnb \arg5
+    .ifnc \arg1, _
+      mov r8, \arg5
+    .endif
+  .endif
+  .ifnb \arg6
+    .ifnc \arg1, _
+      mov r9, \arg6
+    .endif
+  .endif
+  xor al, al
+  call \function_name
+.endm
+

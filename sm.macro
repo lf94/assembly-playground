@@ -1,0 +1,34 @@
+INVALID = -1
+state   = rdi
+
+.macro MachineDefinition name
+  machine_target = \name
+sm_\name:
+  push esp
+.endm
+
+.macro State from, to
+  cmp state, \from; cmove state, \to; jmp sm_end_\machine_target
+.endm
+
+.macro MachineDefinitionEnd name
+  mov state, INVALID
+sm_end_\name:
+  pop esp; ret
+.endm
+
+.macro MachineIgnition name, start_value
+  .global main
+  xcode = rdi
+  main:
+    mov state, \start_value
+.endm
+
+.macro Tick name, times
+  λ \name, state
+.endm
+
+.macro Halt
+  cmp state, INVALID; cmove xcode, 1; cmovne xcode, 0
+  λ   exit, xcode
+.endm

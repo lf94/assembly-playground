@@ -1,0 +1,49 @@
+format ELF64
+
+extrn curl_easy_cleanup
+extrn curl_easy_init
+extrn curl_easy_perform
+extrn curl_easy_setopt
+extrn exit
+extrn printf
+
+public main
+
+; Pulled from curl.h
+CURLOPTTYPE_LONG        = 0
+CURLOPTTYPE_OBJECTPOINT = 10000
+CURLOPT_URL             = CURLOPTTYPE_OBJECTPOINT + 2
+CURL_HTTP_VERSION       = CURLOPTTYPE_LONG + 84
+CURL_HTTP_VERSION_3     = 30
+
+section ".rodata"
+url_google: db "http://google.com", 0
+
+section ".data" writeable
+curl: dq 0
+
+; My first attempt - instantly killed me.
+; C is already optimized to remove boilerplate.
+;
+section ".text" executable
+main:
+  push rax
+  call curl_easy_init
+  mov  [curl], rax
+  mov  rdi, rax
+  mov  rsi, CURLOPT_URL
+  mov  rdx, url_google
+  xor  al, al
+  call curl_easy_setopt
+  lea  rdi, [curl]
+  mov  rsi, CURL_HTTP_VERSION
+  mov  rdx, CURL_HTTP_VERSION_3
+  xor  al, al
+  call curl_easy_setopt
+  mov  rdi, [curl]
+  call curl_easy_perform
+  mov  rdi, [curl]
+  call curl_easy_cleanup
+  xor  rdi, rdi
+  call exit
+

@@ -1,0 +1,14 @@
+.macro pairs e1, e2, rest:vararg
+  .ifnb \e2
+    \e1\()_\e2: .quad \e1, \e2
+    pairs \e1, \rest
+  .endif
+.endm
+
+.macro permutations current, next, rest: vararg
+  .ifnb \next
+    pairs \current, \next, \rest
+    permutations \next, \rest
+  .endif
+.endm
+
